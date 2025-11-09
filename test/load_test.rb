@@ -24,8 +24,8 @@ module Risa
 
       Risa.load_from(@test_dir)
 
-      assert_equal 2, rs(:users).count
-      assert_equal 'Alice', rs(:users).first[:name]
+      assert_equal 2, all(:users).count
+      assert_equal 'Alice', all(:users).first[:name]
     end
 
     def test_load_from_handles_multiple_files
@@ -43,8 +43,8 @@ module Risa
 
       Risa.load_from(@test_dir)
 
-      assert_equal 1, rs(:users).count
-      assert_equal 1, rs(:posts).count
+      assert_equal 1, all(:users).count
+      assert_equal 1, all(:posts).count
     end
 
     def test_reload_from_reloads_changed_data
@@ -55,7 +55,7 @@ module Risa
       RUBY
 
       Risa.load_from(@test_dir)
-      assert_equal 1, rs(:users).count
+      assert_equal 1, all(:users).count
 
       # Change the data file
       create_data_file('users.rb', <<~RUBY)
@@ -68,7 +68,7 @@ module Risa
       RUBY
 
       Risa.reload_from(@test_dir)
-      assert_equal 2, rs(:users).count
+      assert_equal 2, all(:users).count
     end
 
     def test_load_from_handles_nested_directories
@@ -82,7 +82,7 @@ module Risa
 
       Risa.load_from(@test_dir)
 
-      assert_equal 1, rs(:blog_posts).count
+      assert_equal 1, all(:blog_posts).count
     end
 
     private

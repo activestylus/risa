@@ -27,7 +27,7 @@ Risa.define :posts do
 end
 
 # Query it like you always wished you could:
-rs(:posts).where(published: true).order(:created_at, desc: true).first[:title]
+all(:posts).where(published: true).order(:created_at, desc: true).first[:title]
 # => "Hello World"
 ```
 
@@ -60,7 +60,7 @@ Risa.define :posts do
 end
 
 # Query like you always wanted to:
-popular_ruby_posts = rs(:posts)
+popular_ruby_posts = all(:posts)
   .where(tags: { contains: 'ruby' })
   .where(views: { greater_than: 1000 })
   .order(:views, desc: true)
@@ -69,7 +69,7 @@ popular_ruby_posts = rs(:posts)
 puts popular_ruby_posts.first[:title]  # => "Why I Love Ruby"
 ```
 
-That global `rs()` helper? It's there because life's too short to type `Risa.query()` every time.
+That global `all()` helper? It's there because life's too short to type `Risa.query()` every time.
 
 ---
 
@@ -152,8 +152,8 @@ Risa.define :posts do
 end
 
 # Now your queries read like English:
-trending_ruby_posts = rs(:posts).published.tagged('ruby').popular.recent(5)
-featured_content = rs(:posts).published.featured.recent
+trending_ruby_posts = all(:posts).published.tagged('ruby').popular.recent(5)
+featured_content = all(:posts).published.featured.recent
 ```
 
 Scopes are chainable, composable, and parameterizable. They're basically custom query methods that don't suck.
@@ -167,7 +167,7 @@ Risa provides a fluent, chainable API for filtering and sorting your data. Queri
 ### Basic Queries (The Classics)
 
 ```ruby
-posts = rs(:posts) # Get the query builder for :posts
+posts = all(:posts) # Get the query builder for :posts
 
 # Get results
 posts.to_a  # Get all matching records as an array of Risa::InstanceWrapper objects
@@ -188,10 +188,10 @@ Chain multiple `.where` calls or provide multiple conditions in a hash to combin
 
 ```ruby
 # Find published posts tagged 'ruby'
-rs(:posts).where(published: true).where(tags: { contains: 'ruby' })
+all(:posts).where(published: true).where(tags: { contains: 'ruby' })
 
 # Equivalent using a single hash
-rs(:posts).where(published: true, tags: { contains: 'ruby' })
+all(:posts).where(published: true, tags: { contains: 'ruby' })
 ```
 
 ### OR Logic (`or_where`)
@@ -200,7 +200,7 @@ Use `.or_where` to add conditions combined with `OR`.
 
 ```ruby
 # Find posts that are featured OR have more than 1000 views
-rs(:posts).where(featured: true).or_where(views: { greater_than: 1000 })
+all(:posts).where(featured: true).or_where(views: { greater_than: 1000 })
 # => WHERE featured = true OR views > 1000
 ```
 
@@ -210,23 +210,23 @@ Use blocks with `where` and `or_where` to create nested logical groups. Conditio
 
 ```ruby
 # Find posts where (author_id = 1 AND published = true)
-rs(:posts).where do |q|
+all(:posts).where do |q|
   q.where(author_id: 1).where(published: true)
 end
 
 # Find posts where (author_id = 1 AND (published = true OR featured = true))
-rs(:posts).where(author_id: 1).where do |q|
+all(:posts).where(author_id: 1).where do |q|
   q.where(published: true).or_where(featured: true)
 end
 # => WHERE author_id = 1 AND (published = true OR featured = true)
 
 # Find posts where (author_id = 1 AND published = true) OR (views > 1000)
-rs(:posts).where { |q| q.where(author_id: 1).where(published: true) }
+all(:posts).where { |q| q.where(author_id: 1).where(published: true) }
            .or_where(views: { greater_than: 1000 })
 # => WHERE (author_id = 1 AND published = true) OR views > 1000
 
 # Find posts where (author_id = 1 AND published = true) OR (author_id = 2 AND featured = true)
-rs(:posts).where { |q| q.where(author_id: 1).where(published: true) }
+all(:posts).where { |q| q.where(author_id: 1).where(published: true) }
            .or_where { |q| q.where(author_id: 2).where(featured: true) }
 # => WHERE (author_id = 1 AND published = true) OR (author_id = 2 AND featured = true)
 ```
@@ -237,32 +237,32 @@ Use hash conditions within `where` or `or_where` for powerful comparisons and ne
 
 ```ruby
 # Text searches
-rs(:posts).where(title: { contains: 'Ruby' })
-rs(:posts).where(title: { starts_with: 'How to' })
-rs(:posts).where(title: { ends_with: '101' })
+all(:posts).where(title: { contains: 'Ruby' })
+all(:posts).where(title: { starts_with: 'How to' })
+all(:posts).where(title: { ends_with: '101' })
 
 # Numeric comparisons
-rs(:posts).where(views: { greater_than: 1000 })
-rs(:posts).where(views: { less_than_or_equal: 500 })
-rs(:posts).where(score: { from: 7.5, to: 9.0 }) # Inclusive range
-rs(:posts).where(views: 100..500)             # Ruby Range works too
+all(:posts).where(views: { greater_than: 1000 })
+all(:posts).where(views: { less_than_or_equal: 500 })
+all(:posts).where(score: { from: 7.5, to: 9.0 }) # Inclusive range
+all(:posts).where(views: 100..500)             # Ruby Range works too
 
 # Existence and emptiness
-rs(:posts).where(featured_image: { exists: true })  # Key is present and not nil
-rs(:posts).where(featured_image: { exists: false }) # Key is missing or nil
-rs(:posts).where(tags: { empty: false })           # Not nil, not '', not []
-rs(:posts).where(tags: { empty: true })            # Is nil, '', or []
+all(:posts).where(featured_image: { exists: true })  # Key is present and not nil
+all(:posts).where(featured_image: { exists: false }) # Key is missing or nil
+all(:posts).where(tags: { empty: false })           # Not nil, not '', not []
+all(:posts).where(tags: { empty: true })            # Is nil, '', or []
 
 # Array / Set operations
-rs(:posts).where(id: { in: [1, 3, 5] })        # Value is one of these
-rs(:posts).where(id: [1, 3, 5])               # Shortcut for :in
-rs(:posts).where(status: { not_in: ['draft', 'archived'] }) # Value is NOT one of these
-rs(:posts).where(tags: ['ruby', 'web'])      # Exact array match (order matters)
+all(:posts).where(id: { in: [1, 3, 5] })        # Value is one of these
+all(:posts).where(id: [1, 3, 5])               # Shortcut for :in
+all(:posts).where(status: { not_in: ['draft', 'archived'] }) # Value is NOT one of these
+all(:posts).where(tags: ['ruby', 'web'])      # Exact array match (order matters)
 
 # Negation
-rs(:posts).where(published: { not: true })     # Value is not true (false or nil)
-rs(:posts).where(title: { not: 'Hello' })      # Value is not 'Hello'
-rs(:posts).where(views: { not: nil })         # Same as { exists: true }
+all(:posts).where(published: { not: true })     # Value is not true (false or nil)
+all(:posts).where(title: { not: 'Hello' })      # Value is not 'Hello'
+all(:posts).where(views: { not: nil })         # Same as { exists: true }
 ```
 
 ### Ordering (Nil-Safe and Type-Aware)
@@ -271,13 +271,13 @@ Sort your results using `.order`. Nils are always sorted last.
 
 ```ruby
 # Ascending (default)
-rs(:posts).order(:published_at)
+all(:posts).order(:published_at)
 
 # Descending
-rs(:posts).order(:views, desc: true)
+all(:posts).order(:views, desc: true)
 
 # Strings sort naturally
-rs(:posts).order(:title)
+all(:posts).order(:title)
 ```
 
 Mixed types? No problem. Risa handles the type coercion so you don't have to think about it during sorting.
@@ -287,11 +287,11 @@ Mixed types? No problem. Risa handles the type coercion so you don't have to thi
 
 ```ruby
 # Classic pagination
-rs(:posts).limit(10)                    # First 10
-rs(:posts).offset(20).limit(10)         # Items 21-30
+all(:posts).limit(10)                    # First 10
+all(:posts).offset(20).limit(10)         # Items 21-30
 
 # Modern pagination with metadata
-pages = rs(:posts).order(:created_at, desc: true).paginate(per_page: 5)
+pages = all(:posts).order(:created_at, desc: true).paginate(per_page: 5)
 
 page = pages.first
 page.items         # Array of posts for this page
@@ -318,7 +318,7 @@ The Page object has everything you need for pagination UI without any mental mat
 Results aren't plain hashes—they're immutable wrappers that feel like hashes but prevent accidents:
 
 ```ruby
-post = rs(:posts).first
+post = all(:posts).first
 
 # Access like a hash (symbol or string keys both work)
 post[:title]        # => "Hello World"
@@ -353,7 +353,7 @@ Risa.reload
 Risa.defined_models  # => [:posts, :users, :tags]
 
 # Use the explicit API when you need it
-Risa.query(:posts).where(...)  # Same as rs(:posts).where(...)
+Risa.query(:posts).where(...)  # Same as all(:posts).where(...)
 ```
 
 Error messages are actually helpful:
@@ -416,9 +416,9 @@ end
 Access related data using simple dot notation on your `Risa::InstanceWrapper` objects.
 
 ```ruby
-alice = rs(:authors).find_by(id: 1)
-post = rs(:posts).find_by(id: 101)
-profile = rs(:profiles).find_by(profile_id: 201)
+alice = all(:authors).find_by(id: 1)
+post = all(:posts).find_by(id: 101)
+profile = all(:profiles).find_by(profile_id: 201)
 
 # Belongs To (returns InstanceWrapper or nil)
 author_name = post.author.name
@@ -459,11 +459,11 @@ Risa.define :posts do
   belongs_to :creator, class_name: :users, foreign_key: :creator_id, primary_key: :user_pk
 end
 
-admin = rs(:users).first
+admin = all(:users).first
 admin_article_title = admin.articles.first.title
 # => "Admin Post"
 
-post = rs(:posts).find_by(id: 105)
+post = all(:posts).find_by(id: 105)
 creator_name = post.creator.username
 # => "admin"
 ```
@@ -498,11 +498,11 @@ Risa.define :post_tags do # The join collection
 end
 
 # Usage:
-post = rs(:posts).find_by(id: 101)
+post = all(:posts).find_by(id: 101)
 tag_names = post.tags.map { |t| t.name }
 # => ["ruby", "web"]
 
-tag = rs(:tags).find_by(name: 'ruby')
+tag = all(:tags).find_by(name: 'ruby')
 post_titles = tag.posts.map { |p| p.title }
 # => ["Intro to Risa", "Advanced Ruby"]
 
@@ -561,7 +561,7 @@ end
 Presenter methods are automatically available directly on the `InstanceWrapper` objects returned by your queries.
 
 ```ruby
-post = rs(:posts).first
+post = all(:posts).first
 
 # Access hash data keys
 puts post.id       # => 1
@@ -601,8 +601,8 @@ require 'hr'
 Risa.load_from('data')  # Loads all .rb files in data/
 
 # Now all collections are available
-rs(:users).where(active: true)
-rs(:posts).order(:created_at)
+all(:users).where(active: true)
+all(:posts).order(:created_at)
 ```
 
 **Development mode reloading:**

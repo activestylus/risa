@@ -73,7 +73,7 @@ class TestRelations < Minitest::Test
   end
 
   def test_belongs_to_finds_parent
-    post = rs(:posts).find_by(id: 101)
+    post = all(:posts).find_by(id: 101)
     author = post.author
 
     assert_instance_of Risa::InstanceWrapper, author
@@ -83,7 +83,7 @@ class TestRelations < Minitest::Test
   end
 
   def test_belongs_to_returns_nil_if_fk_nil
-    post = rs(:posts).find_by(id: 104)
+    post = all(:posts).find_by(id: 104)
     assert_nil post.author
   end
 
@@ -94,7 +94,7 @@ class TestRelations < Minitest::Test
   end
 
   def test_belongs_to_with_custom_keys
-    article = rs(:articles).find_by(id: 601)
+    article = all(:articles).find_by(id: 601)
     creator = article.creator
 
     assert_instance_of Risa::InstanceWrapper, creator
@@ -103,7 +103,7 @@ class TestRelations < Minitest::Test
   end
 
   def test_has_many_returns_query
-    alice = rs(:authors).find_by(id: 1)
+    alice = all(:authors).find_by(id: 1)
     posts_query = alice.posts
 
     assert_instance_of Risa::Query, posts_query
@@ -111,7 +111,7 @@ class TestRelations < Minitest::Test
   end
 
   def test_has_many_retrieves_children
-    alice = rs(:authors).find_by(id: 1)
+    alice = all(:authors).find_by(id: 1)
     posts = alice.posts.order(:id)
 
     assert_equal 2, posts.size
@@ -120,7 +120,7 @@ class TestRelations < Minitest::Test
   end
 
   def test_has_many_allows_chaining
-    alice = rs(:authors).find_by(id: 1)
+    alice = all(:authors).find_by(id: 1)
     published_posts = alice.posts.where(published: true)
 
     assert_equal 1, published_posts.size
@@ -128,7 +128,7 @@ class TestRelations < Minitest::Test
   end
 
   def test_has_many_returns_empty_query_if_no_children
-    charlie = rs(:authors).find_by(id: 3)
+    charlie = all(:authors).find_by(id: 3)
     posts_query = charlie.posts
 
     assert_instance_of Risa::Query, posts_query
@@ -137,7 +137,7 @@ class TestRelations < Minitest::Test
   end
 
   def test_has_many_with_custom_keys
-    user = rs(:users).first
+    user = all(:users).first
     articles_query = user.articles
 
     assert_instance_of Risa::Query, articles_query
@@ -147,7 +147,7 @@ class TestRelations < Minitest::Test
   end
 
   def test_has_one_finds_child
-    alice = rs(:authors).find_by(id: 1)
+    alice = all(:authors).find_by(id: 1)
     profile = alice.profile
 
     assert_instance_of Risa::InstanceWrapper, profile
@@ -157,14 +157,14 @@ class TestRelations < Minitest::Test
   end
 
   def test_has_one_returns_nil_if_no_child
-    charlie = rs(:authors).find_by(id: 3)
+    charlie = all(:authors).find_by(id: 3)
     profile = charlie.profile
 
     assert_nil profile
   end
 
   def test_has_many_through_returns_query
-    post = rs(:posts).find_by(id: 101)
+    post = all(:posts).find_by(id: 101)
     tags_query = post.tags
 
     assert_instance_of Risa::Query, tags_query
@@ -172,7 +172,7 @@ class TestRelations < Minitest::Test
   end
 
   def test_has_many_through_retrieves_targets
-    post = rs(:posts).find_by(id: 101)
+    post = all(:posts).find_by(id: 101)
     tags = post.tags.order(:id)
 
     assert_equal 2, tags.size
@@ -181,7 +181,7 @@ class TestRelations < Minitest::Test
   end
 
   def test_has_many_through_allows_chaining
-    post = rs(:posts).find_by(id: 101)
+    post = all(:posts).find_by(id: 101)
     ruby_tag = post.tags.where(name: 'ruby')
 
     assert_equal 1, ruby_tag.size
@@ -189,7 +189,7 @@ class TestRelations < Minitest::Test
   end
 
   def test_has_many_through_returns_empty_query_if_no_targets
-    post = rs(:posts).find_by(id: 104)
+    post = all(:posts).find_by(id: 104)
     tags_query = post.tags
 
     assert_instance_of Risa::Query, tags_query
@@ -198,7 +198,7 @@ class TestRelations < Minitest::Test
   end
 
   def test_has_many_through_inverse
-    tag = rs(:tags).find_by(id: 301)
+    tag = all(:tags).find_by(id: 301)
     posts_query = tag.posts
 
     assert_instance_of Risa::Query, posts_query

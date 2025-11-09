@@ -51,8 +51,8 @@ class TestRisaData < Minitest::Test
       from_array([{ id: 1 }])
     end
     
-    # Test the global rs() helper method
-    assert_instance_of Query, rs(:test_model)
+    # Test the global all() helper method
+    assert_instance_of Query, all(:test_model)
   end
 end
 end

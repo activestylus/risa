@@ -1,3 +1,4 @@
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
@@ -6,6 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+
+## [1.0.2] - 2025-11-09
+
+### 💥 Changed
+* Updated the `rs()` helper for the more idiomatic `all()` helper
 
 ## [1.0.1] - 2025-11-01
 
@@ -118,7 +124,7 @@ This is the first stable 1.0 release! It introduces auto-loading and finalizes t
 
 ### 🐛 Fixed
 * Fixed a `NoMethodError` when using `.order` on a key where some records had a `nil` value. Nils are now always sorted last by default.
-* `rs(:model).first` on an empty dataset now correctly returns `nil` instead of raising an error.
+* `all(:model).first` on an empty dataset now correctly returns `nil` instead of raising an error.
 
 ## [0.1.0] - 2025-04-10
 
@@ -126,7 +132,7 @@ This is the first stable 1.0 release! It introduces auto-loading and finalizes t
 * **Initial Release!**
 * `Risa.define(:model_name)` block.
 * `from_array([...])` data source.
-* Global `rs()` helper for easy querying.
+* Global `all()` helper for easy querying.
 * Basic `.where(key: value)` for exact matching.
 * `.order(:key)` for ascending sort.
 * Query execution methods: `.to_a`, `.first`, `.last`, `.each`.

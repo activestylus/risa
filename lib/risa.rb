@@ -85,6 +85,6 @@ module Risa
   end
 end
 
-def rs(model_name)
+def all(model_name)
   Risa.query(model_name)
 end
