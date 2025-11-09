@@ -1,0 +1,8 @@
+require_relative "relations_test"
+require_relative "query_test"
+require_relative "context_test"
+require_relative "instance_test"
+require_relative "edge_test"
+require_relative "paginate_test"
+require_relative "data_test"
+require_relative "load_test"
