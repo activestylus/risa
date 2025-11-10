@@ -1,6 +1,6 @@
-# Risa (Ruby Is So Awesome)
+# RISA: The Static Data ORM for Ruby Hashes
 
-## Advanced Querying & Presentation Layer for Ruby Hashes 
+## Advanced Querying & Presentation Layer for Static Data
 
 You know that feeling when you're prototyping and you just need to store some structured data without the ceremony of setting up a database, migrations, and ORMs? 
 
