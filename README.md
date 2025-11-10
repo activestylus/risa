@@ -42,7 +42,7 @@ No schema. No migrations. No database setup. Just Ruby being Ruby.
 gem 'risa'
 
 # Or if you're feeling spontaneous:
-gem install joys
+gem install risa
 ```
 
 ## Quick Start: From Zero to Querying in 30 Seconds
