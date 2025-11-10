@@ -696,7 +696,7 @@ It's the tool we always wished existed. Now it does.
 **Ready to feel the joy of simple, powerful data?**
 
 ```bash
-gem install hr
+gem install risa
 ```
 
 Your future self will thank you.
